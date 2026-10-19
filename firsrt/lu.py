@@ -1,21 +1,19 @@
-# 1.1
 from common import *
 
 
-# LU-разложение с выбором главного элемента
 def lu_decompose(A):
     n = len(A)
-    U = [r[:] for r in A] # копия A, которая будет превращаться в U, r[:] - копия строки
+    U = [r[:] for r in A] 
     L = [[0.0] * n for _ in range(n)]
-    perm = list(range(n))   # perm[i] = номер исходной строки, ставшей i-й
-    sign = 1                # знак перестановки (для определителя)
+    perm = list(range(n))
+    sign = 1
     for k in range(n):
-        p = max(range(k, n), key=lambda i: abs(U[i][k]))   # главный элемент столбца
+        p = max(range(k, n), key=lambda i: abs(U[i][k]))
         if abs(U[p][k]) < EPS:
             raise ValueError("Матрица вырождена: определитель равен 0")
         if p != k:
             U[k], U[p] = U[p], U[k]
-            L[k], L[p] = L[p], L[k]          # уже вычисленные множители тоже переставляем
+            L[k], L[p] = L[p], L[k]
             perm[k], perm[p] = perm[p], perm[k]
             sign = -sign
         for i in range(k + 1, n):
@@ -54,7 +52,7 @@ def determinant(U, sign):
 def inverse(L, U, perm):
     n = len(L)
     cols = []
-    for j in range(n):                       # решаем A*x = e_j для каждого столбца
+    for j in range(n):
         e = [1.0 if i == j else 0.0 for i in range(n)]
         cols.append(lu_solve(L, U, perm, e))
     return transpose(cols)
@@ -66,25 +64,24 @@ def main():
     n = len(A)
     L, U, perm, sign = lu_decompose(A)
     P = perm_matrix(perm)
-    LU, PA = matmul(L, U), matmul(P, A)
+    LU = matmul(L, U)
+    PA = matmul(P, A)
     x = lu_solve(L, U, perm, b)
     Ainv = inverse(L, U, perm)
     AAinv = matmul(A, Ainv)
+    det_A = determinant(U, sign)
 
-    header("1.1 LU-разложение")
-    print(fmt_matrix(A, "A:"))
-    print(fmt_matrix(P, "\nP:"))
-    print(fmt_matrix(L, "\nL:"))
+    print(fmt_matrix(L, "L:"))
     print(fmt_matrix(U, "\nU:"))
-    print(fmt_matrix(LU, "\nL*U:"))
-    print(fmt_matrix(PA, "\nP*A:"))
-    print(f"max|L*U - P*A| = {max_abs(mat_sub(LU, PA)):.2e}")
-    print("\n" + fmt_vector(x))
-    print(f"невязка |Ax - b| = {vec_norm_inf(vec_sub(matvec(A, x), b)):.2e}")
+    print(fmt_matrix(LU, "\nL * U:"))
+    print("\nРешение x:")
+    print(fmt_vector(x))
     print(fmt_matrix(Ainv, "\nA^-1:"))
-    print(f"\ndet A = {determinant(U, sign):.6f}")
-    print(fmt_matrix(AAinv, "\nA*A^-1:"))
-    print(f"max|A*A^-1 - E| = {max_abs(mat_sub(AAinv, identity(n))):.2e}")
+    print(f"\nDeterminant det(A) = {det_A:.6f}")
+    print(fmt_matrix(AAinv, "\nA * A^-1:"))
+    print(f"max|A * A^-1 - E| = {max_abs(mat_sub(AAinv, identity(n))):.2e}")
+    print(fmt_matrix(PA, "\nP * A:"))
+    print(f"max|L * U - P * A| = {max_abs(mat_sub(LU, PA)):.2e}")
 
 
 if __name__ == "__main__":

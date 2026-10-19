@@ -80,7 +80,3 @@ def fmt_matrix(M, title=None, prec=4):
 
 def fmt_vector(v, name="x", prec=6):
     return f"{name} = [" + ", ".join(f"{x:.{prec}f}" for x in v) + "]"
-
-
-def header(text):
-    print(f"\n{text}")

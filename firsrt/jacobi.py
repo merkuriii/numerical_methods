@@ -34,24 +34,20 @@ def main():
         raise ValueError("Матрица должна быть квадратной")
     if any(abs(A[i][j] - A[j][i]) > 1e-12 for i in range(n) for j in range(n)):
         raise ValueError("Нужна симметричная матрица")
+        
     eps = float(params.get("eps", "1e-8"))
-    vals, V, iters, hist = jacobi(A, eps)
+    vals, V, iters, _ = jacobi(A, eps)
     Lam = [[vals[i] if i == j else 0.0 for j in range(n)] for i in range(n)]
 
-    header("1.4 Метод вращений Якоби")
-    print(fmt_matrix(A, "A:"))
-    print(f"\neps = {eps}, вращений: {iters}")
-    print("\n" + fmt_vector(vals, "собственные значения", 8))
-    print(fmt_matrix(V, "\nV (столбцы - собственные векторы):", 6))
-    for j in range(n):
-        print(fmt_vector([V[i][j] for i in range(n)], f"v{j + 1}"))
+    print("1.4 Метод вращений Якоби")
+    print(f"eps = {eps}")
+    print(fmt_vector(vals, "\nСобственные значения:"))
+    print(fmt_matrix(V, "\nМатрица собственных векторов V:", 6))
+    
     AV, VL = matmul(A, V), matmul(V, Lam)
-    print(fmt_matrix(AV, "\nA*V:", 6))
-    print(fmt_matrix(VL, "V*Lambda:", 6))
+    print(fmt_matrix(AV, "\nA * V:", 6))
+    print(fmt_matrix(VL, "V * Lambda:", 6))
     print(f"max|A*V - V*Lambda| = {max_abs(mat_sub(AV, VL)):.2e}")
-    print("\n k  (i,j)   погрешность")
-    for k, i, j, e in hist:
-        print(f"{k:2d}  {('(%d,%d)' % (i, j)) if i else '  -  ':>5}   {e:.2e}")
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ def run(task, path=None):
     module, default = TASKS[task]
     sys.argv = [module.__name__ + ".py", path or os.path.join(INPUTS, default)]
     module.main()
+    print("\n")
 
 
 def main():

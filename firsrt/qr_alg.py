@@ -73,18 +73,18 @@ def main():
     if any(len(r) != n for r in A):
         raise ValueError("Матрица должна быть квадратной")
     eps = float(params.get("eps", "1e-9"))
+    
     Q, R = qr_decompose(A)
     QR = matmul(Q, R)
-    vals, _, iters = qr_algorithm(A, eps)
+    vals, _, _ = qr_algorithm(A, eps)
 
-    header("1.5 QR-разложение")
-    print(fmt_matrix(A, "A:"))
-    print(fmt_matrix(Q, "\nQ:"))
-    print(fmt_matrix(R, "\nR:"))
-    print(fmt_matrix(QR, "\nQ*R:"))
-    print(f"max|Q*R - A| = {max_abs(mat_sub(QR, A)):.2e}")
-    print(f"\neps = {eps}, итераций: {iters}")
-    print("собственные значения:")
+    print("1.5 QR-разложение")
+    print(fmt_matrix(A, "1. Исходная матрица A:"))
+    print(fmt_matrix(Q, "\n2. Матрица Q:"))
+    print(fmt_matrix(R, "\nМатрица R:"))
+    print(fmt_matrix(QR, "\n3. Результат умножения Q · R:"))
+    
+    print("\n4. Найденные собственные значения:")
     for i, v in enumerate(vals):
         print(f"  lambda{i + 1} = {fmt_c(v)}")
 

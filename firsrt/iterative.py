@@ -53,22 +53,14 @@ def main():
     L, U, perm, _ = lu_decompose(A)
     exact = lu_solve(L, U, perm, b)
     alpha, beta = to_iteration_form(A, b)
-    q = mat_norm_inf(alpha)
-    xs, ks, hs, oks = simple_iteration(alpha, beta, eps, exact)
-    xz, kz, hz, okz = seidel(alpha, beta, eps, exact)
+    _, ks, _, _ = simple_iteration(alpha, beta, eps, exact)
+    _, kz, _, _ = seidel(alpha, beta, eps, exact)
 
-    header("1.3 Простые итерации и Зейдель")
-    print(f"eps = {eps},  ||alpha|| = {q:.4f}" + ("" if q < 1 else "  (условие сходимости не выполнено)"))
-    print("\n" + fmt_vector(exact, "эталон (LU)"))
-    print(fmt_vector(xs, "простые     "))
-    print(fmt_vector(xz, "Зейдель     "))
-    print(f"\nитераций: простые = {ks}{'' if oks else ' (не сошлись)'}, Зейдель = {kz}{'' if okz else ' (не сошёлся)'}")
-    print(f"погрешность: простые = {vec_norm_inf(vec_sub(xs, exact)):.2e}, Зейдель = {vec_norm_inf(vec_sub(xz, exact)):.2e}")
-    if oks and okz:
-        print(f"Зейдель быстрее в {ks / kz:.2f} раза")
-    print("\n k    простые    Зейдель")
-    for k in range(min(8, len(hs), len(hz))):
-        print(f"{k + 1:2d}  {hs[k]:.2e}  {hz[k]:.2e}")
+    print(f"eps = {eps}")
+    print(fmt_vector(exact, "Эталонное решение:"))
+    print(f"Количество итераций (простые): {ks}")
+    print(f"Количество итераций (Зейдель): {kz}")
+    print(f"Сравнение скорости: Зейдель быстрее в {ks / kz:.2f} раза")
 
 
 if __name__ == "__main__":
